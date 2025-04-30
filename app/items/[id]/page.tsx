@@ -8,7 +8,14 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, MapPin, ArrowLeft, User, Mail, AlertCircle, Trash2 } from "lucide-react"
 import { formatDate } from "@/lib/utils"
-import { fetchLostItemById, fetchFoundItemById, deleteItem, submitFoundClaim, submitLostClaim } from "@/lib/api"
+import {
+  fetchLostItemById,
+  fetchFoundItemById,
+  fetchUserInfo,
+  deleteItem,
+  submitFoundClaim,
+  submitLostClaim,
+} from "@/lib/api"
 import { isLoggedIn, getCurrentUserId } from "@/lib/auth"
 import type { LostItem, FoundItem, Claim } from "@/lib/types"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -26,6 +33,8 @@ export default function ItemDetailPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isOwner, setIsOwner] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
+  // Add a new state for the poster's information
+  const [posterInfo, setPosterInfo] = useState<{ firstName: string; lastName: string; email: string } | null>(null)
 
   useEffect(() => {
     // Check if we're in the browser before accessing localStorage
@@ -51,67 +60,76 @@ export default function ItemDetailPage() {
     }
   }, [])
 
-  useEffect(() => {
-    const loadItem = async () => {
+  // Update the loadItem function to fetch the poster's information
+  const loadItem = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      if (typeof params.id !== "string") return
+
+      // Determine if this is a lost or found item
       try {
-        setIsLoading(true)
-        setError(null)
+        const lostItem = await fetchLostItemById(params.id)
+        if (lostItem) {
+          setItem(lostItem)
+          setItemType("lost")
 
-        if (typeof params.id !== "string") return
+          // Check if current user is the owner
+          const currentUserId = getCurrentUserId()
+          const isItemOwner = Boolean(currentUserId && lostItem.userId === currentUserId)
+          setIsOwner(isItemOwner)
 
-        // Determine if this is a lost or found item
-        try {
-          const lostItem = await fetchLostItemById(params.id)
-          if (lostItem) {
-            // Add placeholder user info (this would normally come from the API)
-            // We're not modifying the API, just adding display properties to the frontend
-            lostItem.userName = lostItem.userName || "Item Owner"
-            lostItem.userEmail = lostItem.userEmail || "contact@example.com"
-
-            setItem(lostItem)
-            setItemType("lost")
-
-            // Check if current user is the owner
-            const currentUserId = getCurrentUserId()
-            const isItemOwner = Boolean(currentUserId && lostItem.userId === currentUserId)
-            setIsOwner(isItemOwner)
-            return
+          // Fetch the poster's information
+          try {
+            const userInfo = await fetchUserInfo(lostItem.userId)
+            setPosterInfo(userInfo)
+          } catch (userError) {
+            console.error("Failed to fetch user info:", userError)
           }
-        } catch (error) {
-          console.error("Failed to fetch lost item:", error)
+
+          return
         }
-
-        try {
-          const foundItem = await fetchFoundItemById(params.id)
-          if (foundItem) {
-            // Add placeholder user info (this would normally come from the API)
-            // We're not modifying the API, just adding display properties to the frontend
-            foundItem.userName = foundItem.userName || "Item Finder"
-            foundItem.userEmail = foundItem.userEmail || "contact@example.com"
-
-            setItem(foundItem)
-            setItemType("found")
-
-            // Check if current user is the owner
-            const currentUserId = getCurrentUserId()
-            const isItemOwner = Boolean(currentUserId && foundItem.userId === currentUserId)
-            setIsOwner(isItemOwner)
-            return
-          }
-        } catch (error) {
-          console.error("Failed to fetch found item:", error)
-        }
-
-        // If we get here, neither item was found
-        setError("Item not found")
       } catch (error) {
-        console.error("Failed to fetch item details:", error)
-        setError("Failed to load item details. Please try again later.")
-      } finally {
-        setIsLoading(false)
+        console.error("Failed to fetch lost item:", error)
       }
-    }
 
+      try {
+        const foundItem = await fetchFoundItemById(params.id)
+        if (foundItem) {
+          setItem(foundItem)
+          setItemType("found")
+
+          // Check if current user is the owner
+          const currentUserId = getCurrentUserId()
+          const isItemOwner = Boolean(currentUserId && foundItem.userId === currentUserId)
+          setIsOwner(isItemOwner)
+
+          // Fetch the poster's information
+          try {
+            const userInfo = await fetchUserInfo(foundItem.userId)
+            setPosterInfo(userInfo)
+          } catch (userError) {
+            console.error("Failed to fetch user info:", userError)
+          }
+
+          return
+        }
+      } catch (error) {
+        console.error("Failed to fetch found item:", error)
+      }
+
+      // If we get here, neither item was found
+      setError("Item not found")
+    } catch (error) {
+      console.error("Failed to fetch item details:", error)
+      setError("Failed to load item details. Please try again later.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
     loadItem()
   }, [params.id])
 
@@ -301,14 +319,22 @@ export default function ItemDetailPage() {
               <div className="pt-4">
                 <div className="mb-6 p-4 border rounded-md">
                   <h2 className="text-lg font-semibold mb-3">Posted by</h2>
-                  <div className="flex items-center mb-2">
-                    <User className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span>{item.userName || "Anonymous User"}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span className="text-muted-foreground">{item.userEmail || "No email provided"}</span>
-                  </div>
+                  {posterInfo ? (
+                    <>
+                      <div className="flex items-center mb-2">
+                        <User className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <span>
+                          {posterInfo.firstName} {posterInfo.lastName}
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <span className="text-muted-foreground">{posterInfo.email}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">Loading user information...</p>
+                  )}
                 </div>
 
                 {!isAuthenticated ? (
