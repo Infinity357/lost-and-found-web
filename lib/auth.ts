@@ -4,7 +4,7 @@ import type { LoginData, RegisterData, LoginResponse } from "./types"
 // Function to handle user login
 export async function loginUser(data: LoginData): Promise<string> {
   try {
-    const response = await fetch("https://lost-and-found-api-production.up.railway.app/auth/login", {
+    const response = await fetch("http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export async function loginUser(data: LoginData): Promise<string> {
 // Function to handle user registration
 export async function registerUser(data: RegisterData): Promise<string> {
   try {
-    const response = await fetch("https://lost-and-found-api-production.up.railway.app/auth/register", {
+    const response = await fetch("http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -4,7 +4,7 @@ import { getCurrentUserId } from "./auth"
 // API functions for lost items
 export async function fetchLostItems(): Promise<LostItem[]> {
   try {
-    const response = await fetch("https://lost-and-found-api-production.up.railway.app/lost", {
+    const response = await fetch("http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/lost", {
       cache: "no-store",
     })
 
@@ -22,7 +22,7 @@ export async function fetchLostItems(): Promise<LostItem[]> {
 // Fetch lost items for a specific user
 export async function fetchUserLostItems(userId: string): Promise<LostItem[]> {
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/lost?userId=${userId}`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/lost?userId=${userId}`, {
       cache: "no-store",
     })
 
@@ -40,7 +40,7 @@ export async function fetchUserLostItems(userId: string): Promise<LostItem[]> {
 // API functions for found items
 export async function fetchFoundItems(): Promise<FoundItem[]> {
   try {
-    const response = await fetch("https://lost-and-found-api-production.up.railway.app/found", {
+    const response = await fetch("http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/found", {
       cache: "no-store",
     })
 
@@ -58,7 +58,7 @@ export async function fetchFoundItems(): Promise<FoundItem[]> {
 // Fetch found items for a specific user
 export async function fetchUserFoundItems(userId: string): Promise<FoundItem[]> {
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/found?userId=${userId}`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/found?userId=${userId}`, {
       cache: "no-store",
     })
 
@@ -76,7 +76,7 @@ export async function fetchUserFoundItems(userId: string): Promise<FoundItem[]> 
 // Fetch a specific lost item by ID
 export async function fetchLostItemById(itemId: string): Promise<LostItem | null> {
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/lost/${itemId}`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/lost/${itemId}`, {
       cache: "no-store",
     })
 
@@ -102,7 +102,7 @@ export async function fetchLostItemById(itemId: string): Promise<LostItem | null
 // Fetch a specific found item by ID
 export async function fetchFoundItemById(itemId: string): Promise<FoundItem | null> {
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/found/${itemId}`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/found/${itemId}`, {
       cache: "no-store",
     })
 
@@ -128,7 +128,7 @@ export async function fetchFoundItemById(itemId: string): Promise<FoundItem | nu
 // Fetch user information for claims
 export async function fetchUserInfo(userId: string): Promise<User> {
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/auth?userId=${userId}`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/auth?userId=${userId}`, {
       cache: "no-store",
     })
 
@@ -146,7 +146,7 @@ export async function fetchUserInfo(userId: string): Promise<User> {
 // Fetch claims for a lost item (users who found it)
 export async function fetchLostItemClaims(itemId: string): Promise<Claim[]> {
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/lost/${itemId}/claims`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/lost/${itemId}/claims`, {
       cache: "no-store",
     })
 
@@ -164,7 +164,7 @@ export async function fetchLostItemClaims(itemId: string): Promise<Claim[]> {
 // Fetch claims for a found item (users who claim it's theirs)
 export async function fetchFoundItemClaims(itemId: string): Promise<Claim[]> {
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/found/${itemId}/claims`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/found/${itemId}/claims`, {
       cache: "no-store",
     })
 
@@ -185,7 +185,7 @@ export async function submitFoundClaim(itemId: string): Promise<void> {
   if (!userId) throw new Error("User not authenticated")
 
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/lost/${itemId}/claim`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/lost/${itemId}/claim`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -209,7 +209,7 @@ export async function submitLostClaim(itemId: string): Promise<void> {
   if (!userId) throw new Error("User not authenticated")
 
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/found/${itemId}/claim`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/found/${itemId}/claim`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -233,7 +233,7 @@ export async function uploadImage(file: File): Promise<string> {
     const formData = new FormData()
     formData.append("image", file)
 
-    const response = await fetch("https://lost-and-found-api-production.up.railway.app/upload", {
+    const response = await fetch("http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/upload", {
       method: "POST",
       body: formData,
     })
@@ -270,7 +270,7 @@ export async function reportLostItem(formData: {
     }
 
     // Then create the item with the image URL
-    const response = await fetch("https://lost-and-found-api-production.up.railway.app/lost", {
+    const response = await fetch("http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/lost", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -314,7 +314,7 @@ export async function reportFoundItem(formData: {
     }
 
     // Then create the item with the image URL
-    const response = await fetch("https://lost-and-found-api-production.up.railway.app/found", {
+    const response = await fetch("http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/found", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -342,7 +342,7 @@ export async function reportFoundItem(formData: {
 // Delete a lost item
 export async function deleteLostItem(itemId: string): Promise<void> {
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/lost/${itemId}`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/lost/${itemId}`, {
       method: "DELETE",
     })
 
@@ -359,7 +359,7 @@ export async function deleteLostItem(itemId: string): Promise<void> {
 // Delete a found item
 export async function deleteFoundItem(itemId: string): Promise<void> {
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/found/${itemId}`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/found/${itemId}`, {
       method: "DELETE",
     })
 
@@ -435,7 +435,7 @@ export async function submitClaim(
   if (!userId) throw new Error("User not authenticated")
 
   try {
-    const response = await fetch(`https://lost-and-found-api-production.up.railway.app/claims/${itemId}`, {
+    const response = await fetch(`http://lost-and-found-api-env.eba-vnx8dpq2.us-east-1.elasticbeanstalk.com/claims/${itemId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
