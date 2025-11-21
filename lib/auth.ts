@@ -4,7 +4,7 @@ import type { LoginData, RegisterData, LoginResponse } from "./types"
 // Function to handle user login
 export async function loginUser(data: LoginData): Promise<string> {
   try {
-    const response = await fetch("https://lost-and-found-api-1-2s7u.onrender.com/auth/login", {
+    const response = await fetch("https://lost-and-found-api-2.onrender.com/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export async function loginUser(data: LoginData): Promise<string> {
 // Function to handle user registration
 export async function registerUser(data: RegisterData): Promise<string> {
   try {
-    const response = await fetch("https://lost-and-found-api-1-2s7u.onrender.com/auth/register", {
+    const response = await fetch("https://lost-and-found-api-2.onrender.com/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
